@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b0c">
+  <meta name="description" content="KL Dev-Ring leaderboard — Kerala's builders ranked by what they ship. Commits, merged PRs, projects, blog posts, and streak.">
+  <title>Leaderboard — KL Dev-Ring</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="KL Dev-Ring home">
+      <svg viewBox="0 0 46 46" aria-hidden="true">
+        <path d="M23 2 42 12v22L23 44 4 34V12Z"/>
+        <path d="m12 27 7-11v14m0-7 9-7m-9 7 9 7m-1-14h7m-7 14h7"/>
+      </svg>
+      <span><b>KL</b> DEV-RING</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <a class="nav-link" href="./">The Ring</a>
+      <a class="nav-link" href="./#universeView">Universe</a>
+      <a class="nav-link active" href="./leaderboard.html">Leaderboard</a>
+      <a class="nav-link" href="./#districtsView">Kerala</a>
+    </nav>
+    <a class="join-button" href="https://github.com/KLDevRing/ring/fork" target="_blank" rel="noreferrer">
+      <span>Join the ring</span><i>↗</i>
+    </a>
+  </header>
+
+  <main>
+
+    <!-- ── HERO ─────────────────────────────────────────────── -->
+    <section class="hero lb-hero" aria-label="Leaderboard introduction">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="live-dot"></span> KERALA BUILDER NETWORK / RANKED</div>
+        <h1>Ranked by what<br>you <em>ship.</em></h1>
+        <p>Builder scores are calculated from GitHub contributions, merged pull requests, shipped projects, published posts, and active streaks. No followers. No likes. Just output.</p>
+      </div>
+      <div class="hero-stats" id="lbStats"></div>
+    </section>
+
+    <!-- ── SPOTLIGHT ─────────────────────────────────────────── -->
+    <section class="lb-spotlight-shell" id="lbSpotlight" aria-label="Top builder spotlight">
+      <div class="lb-spotlight-label">
+        <span class="eyebrow">01 / TOP SIGNAL</span>
+        <p>The current record holder. Ranked by cumulative builder score.</p>
+      </div>
+      <div class="lb-spotlight-card" id="lbSpotlightCard">
+        <div class="lb-spotlight-loading">ACQUIRING SIGNAL...</div>
+      </div>
+    </section>
+
+    <!-- ── RANKING TABLE ─────────────────────────────────────── -->
+    <section class="section-block lb-table-section" aria-label="Full builder rankings">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">02 / BUILDER RANKINGS</span>
+          <h2>The full signal list.</h2>
+        </div>
+        <p>Every builder in the ring, ranked by their cumulative score. Scores update with each merged PR to the member registry.</p>
+      </div>
+
+      <div class="lb-controls">
+        <div class="lb-search-wrap">
+          <span>⌕</span>
+          <input id="lbSearch" type="search" placeholder="Filter builders..." autocomplete="off" aria-label="Filter leaderboard">
+        </div>
+        <div class="lb-metric-tabs" id="lbMetricTabs" role="group" aria-label="Sort rankings by">
+          <button class="active" data-sort="score" aria-pressed="true" aria-label="Sort by score">Score</button>
+          <button data-sort="contributions" aria-pressed="false" aria-label="Sort by commits">Commits</button>
+          <button data-sort="mergedPRs" aria-pressed="false" aria-label="Sort by merged pull requests">PRs</button>
+          <button data-sort="projects" aria-pressed="false" aria-label="Sort by projects">Projects</button>
+          <button data-sort="posts" aria-pressed="false" aria-label="Sort by posts">Posts</button>
+          <button data-sort="streak" aria-pressed="false" aria-label="Sort by streak">Streak</button>
+        </div>
+      </div>
+
+      <div class="lb-table-wrap" role="region" aria-label="Ranking table" aria-live="polite">
+        <table class="lb-table" id="lbTable">
+          <thead>
+            <tr>
+              <th scope="col" class="lb-col-rank">RANK</th>
+              <th scope="col" class="lb-col-builder">BUILDER</th>
+              <th scope="col" class="lb-col-score">SCORE</th>
+              <th scope="col" class="lb-col-commits">COMMITS</th>
+              <th scope="col" class="lb-col-prs">PRS</th>
+              <th scope="col" class="lb-col-projects">PROJECTS</th>
+              <th scope="col" class="lb-col-posts">POSTS</th>
+              <th scope="col" class="lb-col-streak">STREAK</th>
+              <th scope="col" class="lb-col-links">LINKS</th>
+            </tr>
+          </thead>
+          <tbody id="lbBody">
+            <tr class="lb-loading-row"><td colspan="9"><span>LOADING SIGNALS...</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── SCORE FORMULA ─────────────────────────────────────── -->
+    <section class="lb-formula-section" aria-label="Score formula explanation">
+      <div class="lb-formula-inner">
+        <div class="lb-formula-copy">
+          <span class="eyebrow">03 / RANKING ENGINE</span>
+          <h2>How the score works.</h2>
+          <p>Caps prevent any single metric from dominating. There are no followers, likes, or page views. The formula is public and versioned.</p>
+          <a class="lb-formula-link" href="https://github.com/KLDevRing/ring/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noreferrer">Read the spec ↗</a>
+        </div>
+        <div class="lb-formula-grid">
+          <div class="lb-formula-item">
+            <small>COMMITS</small>
+            <code>log<sub>2</sub>(n + 1) × 18</code>
+            <span>Logarithmic — sustained output over spikes</span>
+          </div>
+          <div class="lb-formula-item">
+            <small>MERGED PRs</small>
+            <code>min(n, 75) × 1.8</code>
+            <span>Capped at 75 PRs</span>
+          </div>
+          <div class="lb-formula-item">
+            <small>PROJECTS</small>
+            <code>min(n, 20) × 5</code>
+            <span>Capped at 20 shipped projects</span>
+          </div>
+          <div class="lb-formula-item">
+            <small>POSTS</small>
+            <code>min(n, 40) × 2.2</code>
+            <span>Capped at 40 published posts</span>
+          </div>
+          <div class="lb-formula-item">
+            <small>STREAK (weeks)</small>
+            <code>min(n, 52) × 1.5</code>
+            <span>Capped at 52 weeks</span>
+          </div>
+          <div class="lb-formula-item lb-formula-total">
+            <small>TOTAL BUILDER SCORE</small>
+            <code>Σ above</code>
+            <span>Integer, publicly auditable</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MANIFESTO (reuse existing class) ─────────────────── -->
+    <section class="manifesto">
+      <div class="manifesto-mark">ക</div>
+      <p>Not ranked by attention.<br><strong>Ranked by what you ship.</strong><br>Connected by what you build.</p>
+      <a href="https://github.com/KLDevRing/ring/fork" target="_blank" rel="noreferrer">Join the ring ↗</a>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="brand"><span><b>KL</b> DEV-RING</span></div>
+    <p>Built in the open by Kerala's builder community.</p>
+    <div><a href="https://github.com/KLDevRing/ring">GitHub</a><a href="./widget.html">Widget</a><a href="./">Universe</a></div>
+  </footer>
+
+  <dialog class="profile-modal" id="lbProfileModal">
+    <button class="modal-close" id="lbCloseProfile" aria-label="Close profile">×</button>
+    <div id="lbProfileContent"></div>
+  </dialog>
+
+  <script type="module" src="./leaderboard.js"></script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+import { initials, buildProfileHTML } from "./utils.js";
+
 const state = {
   data: null, nodes: [], active: null, hovered: null, filter: "all", query: "",
   transform: { x: 0, y: 0, scale: 1 }, drag: null, time: 0,
@@ -266,6 +268,7 @@ function bindEvents() {
   $(".profile-modal").addEventListener("click", (event) => { if (event.target === event.currentTarget) event.currentTarget.close(); });
   document.querySelectorAll(".nav-link").forEach((link) => link.addEventListener("click", () => {
     const target = { ring: "#ringView", universe: "#universeView", districts: "#districtsView", trails: "#trailsView" }[link.dataset.view];
+    if (!target) return; // anchor nav-links (e.g. Leaderboard) use their href
     document.querySelector(target).scrollIntoView({ behavior: "smooth" });
   }));
 }
@@ -380,37 +383,9 @@ function selectNode(node) {
 function openProfile(node) {
   if (!node) return;
   selectNode(node);
-  const projects = node.projects || [];
-  $("#profileContent").innerHTML = `
-    <div class="profile-sheet">
-      <aside class="passport">
-        <span class="eyebrow">KERALA BUILDER PASSPORT</span>
-        <div class="passport-avatar">${initials(node.name)}</div>
-        <h2>${node.name}</h2><p>${node.district}<br>${node.country}</p>
-        <div class="passport-code">
-          <div><span>RING ID</span><b>KL-${String(node.rank).padStart(4, "0")}</b></div>
-          <div><span>JOINED</span><b>${node.joined}</b></div>
-          <div><span>BUILDER SCORE</span><b>${node.score}</b></div>
-          <div><span>NETWORK RANK</span><b>#${node.rank}</b></div>
-          <div><span>STREAK</span><b>${node.stats?.streak || 0} WEEKS</b></div>
-        </div>
-      </aside>
-      <article class="profile-main">
-        <span class="eyebrow">ACTIVE BUILDER / ${node.handle.toUpperCase()}</span>
-        <h1>${node.name}</h1><p>${node.bio}</p>
-        <div class="badge-row">${node.badges.map((badge) => `<span class="badge">${badge.icon} ${badge.label}</span>`).join("")}</div>
-        <span class="eyebrow">SHIPPED WORK</span>
-        <div class="project-list">${projects.map((project) => `<a class="project" href="${project.url}" target="_blank" rel="noreferrer"><b>${project.name}</b><span>↗</span><p>${project.description}</p></a>`).join("")}</div>
-        <div class="profile-links">
-          <a href="${node.site}" target="_blank" rel="noreferrer">Personal site ↗</a>
-          <a href="https://github.com/${node.github}" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href="./builders/${node.handle}/">Full profile ↗</a>
-        </div>
-      </article>
-    </div>`;
+  $("#profileContent").innerHTML = buildProfileHTML(node);
   $("#profileModal").showModal();
 }
-function initials(name) { return name.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase(); }
 function toggleSecretMode() {
   document.body.classList.toggle("secret");
   state.nodes.forEach((node) => { node.hue = document.body.classList.contains("secret") ? 115 + Math.random() * 70 : node.hue; });
