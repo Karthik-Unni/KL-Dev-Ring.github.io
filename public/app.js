@@ -65,7 +65,6 @@ function updateRing(nextIndex, animate = true) {
     if (offset > total / 2) offset -= total;
     if (offset < -total / 2) offset += total;
     card.style.setProperty("--ring-offset", offset);
-    card.style.setProperty("--ring-depth", `${Math.abs(offset) * -260}px`);
     card.style.setProperty("--ring-scale", Math.max(.64, 1 - Math.abs(offset) * .12));
     card.style.setProperty("--ring-opacity", Math.max(.12, 1 - Math.abs(offset) * .42));
     card.style.setProperty("--ring-saturation", Math.max(.3, 1 - Math.abs(offset) * .35));

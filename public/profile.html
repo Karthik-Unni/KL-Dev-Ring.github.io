@@ -23,10 +23,10 @@
     const initials = node.name.split(/\s+/).map(p => p[0]).slice(0, 2).join("");
     document.querySelector("#standaloneProfile").innerHTML = `
       <div class="profile-modal" style="display:block;position:relative;width:min(900px,100%);max-height:none">
-        <div class="profile-sheet">
+        <div class="profile-sheet" style="--node-hue: ${node.hue ?? 38}">
           <aside class="passport"><span class="eyebrow">KERALA BUILDER PASSPORT</span><div class="passport-avatar">${initials}</div>
             <h2>${node.name}</h2><p>${node.district}<br>${node.country}</p>
-            <div class="passport-code"><div><span>RING ID</span><b>KL-${String(node.rank).padStart(4,"0")}</b></div><div><span>JOINED</span><b>${node.joined}</b></div><div><span>BUILDER SCORE</span><b>${node.score}</b></div><div><span>NETWORK RANK</span><b>#${node.rank}</b></div><div><span>STREAK</span><b>${node.stats?.streak || 0} WEEKS</b></div></div>
+            <div class="passport-code"><div><span>RING ID</span><b>KL-${String(node.rank).padStart(4,"0")}</b></div><div><span>JOINED</span><b>${node.joined}</b></div><div><span>BUILDER SCORE</span><b style="color:hsl(${node.hue ?? 38} 90% 65%)">${node.score}</b></div><div><span>NETWORK RANK</span><b>#${node.rank}</b></div><div><span>STREAK</span><b>${node.stats?.streak || 0} WEEKS</b></div></div>
           </aside>
           <article class="profile-main"><span class="eyebrow">ACTIVE BUILDER / ${node.handle.toUpperCase()}</span><h1>${node.name}</h1><p>${node.bio}</p>
             <div class="badge-row">${node.badges.map(b => `<span class="badge">${b.icon} ${b.label}</span>`).join("")}</div>
