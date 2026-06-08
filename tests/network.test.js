@@ -13,7 +13,9 @@ test("network output is deterministic and connected", async () => {
   const a = buildNetwork(members);
   const b = buildNetwork(members);
   assert.deepEqual(a.nodes.map(({ x, y }) => [x, y]), b.nodes.map(({ x, y }) => [x, y]));
-  assert.ok(a.links.length >= a.nodes.length / 2);
+  if (a.nodes.length >= 2) {
+    assert.ok(a.links.length >= a.nodes.length / 2);
+  }
   assert.equal(a.stats.builders, members.length);
 });
 

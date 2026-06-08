@@ -1,0 +1,19 @@
+{
+  "handle": "karthik-unni",
+  "name": "Karthik Unni",
+  "github": "Karthik-Unni",
+  "site": "https://karthik-unni.github.io",
+  "city": "Ernakulam",
+  "district": "Ernakulam",
+  "country": "India",
+  "tags": ["opensource", "webdev"],
+  "bio": "Creator of KL Dev-Ring. Building Kerala's open-source builder network.",
+  "joined": "2026-06-08",
+  "projects": [
+    {
+      "name": "KL Dev-Ring",
+      "url": "https://github.com/KLWebRing/KL-Dev-Ring.github.io",
+      "description": "Kerala's open-source builder network."
+    }
+  ]
+}
