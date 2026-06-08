@@ -6,6 +6,7 @@ const state = {
   active: null,
   query: "",
   activeTab: "all-time",
+  activeView: "ring",
   ringIndex: 0,
   ringWheelLocked: false,
   ringTouchX: null
@@ -23,6 +24,7 @@ async function init() {
   }
 
   renderRing();
+  renderShowcase();
   renderLeaderboard();
   renderStats();
   bindEvents();
@@ -230,6 +232,59 @@ function renderLeaderboard() {
   }
 }
 
+function renderShowcase() {
+  const grid = $("#showcaseGrid");
+  if (!grid) return;
+
+  const projects = state.nodes.flatMap((node) => 
+    (node.projects || []).map((project) => ({
+      ...project,
+      builderName: node.name,
+      builderHandle: node.handle,
+      builderHue: node.hue ?? 38,
+      tags: project.tech || node.tags || []
+    }))
+  );
+
+  if (projects.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-showcase">
+        <span class="eyebrow">NO PROJECTS FOUND</span>
+        <p>No active project submissions detected in the registry.</p>
+      </div>
+    `;
+    return;
+  }
+
+  grid.innerHTML = projects.map((p) => `
+    <article class="showcase-card" data-search-tokens="${escapeAttr(p.name + " " + p.description + " " + p.builderName + " " + p.tags.join(" "))}" style="--node-hue: ${p.builderHue}">
+      <div class="showcase-card-header">
+        <h3>${p.name}</h3>
+        <button class="showcase-creator" data-open-builder="${p.builderHandle}">
+          by <span>${p.builderName}</span>
+        </button>
+      </div>
+      <p class="showcase-desc">${p.description}</p>
+      <div class="showcase-tags">
+        ${p.tags.slice(0, 4).map((t) => `<span>${t}</span>`).join("")}
+      </div>
+      <div class="showcase-links">
+        ${p.url ? `<a href="${p.url}" target="_blank" rel="noreferrer">Launch Demo <span>↗</span></a>` : ""}
+        <a href="https://github.com/${p.builderHandle}" target="_blank" rel="noreferrer">Creator GitHub <span>↗</span></a>
+      </div>
+    </article>
+  `).join("");
+}
+
+function filterShowcase() {
+  const cards = document.querySelectorAll("#showcaseGrid .showcase-card");
+  cards.forEach((card) => {
+    if (!card.dataset.searchTokens) return;
+    const match = !state.query || card.dataset.searchTokens.includes(state.query);
+    card.style.display = match ? "" : "none";
+  });
+}
+
 function renderStats() {
   const statsEl = $("#topbarStats");
   if (!statsEl) return;
@@ -322,6 +377,29 @@ function bindEvents() {
     });
   });
 
+  // View switching handler
+  document.querySelectorAll(".view-tabs button")?.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".view-tabs button").forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      state.activeView = btn.dataset.view;
+
+      if (state.activeView === "ring") {
+        $("#ringInner")?.classList.remove("hidden");
+        $("#showcaseInner")?.classList.add("hidden");
+      } else {
+        $("#ringInner")?.classList.add("hidden");
+        $("#showcaseInner")?.classList.remove("hidden");
+        renderShowcase();
+        filterShowcase();
+      }
+    });
+  });
+
   $("#ringPrev")?.addEventListener("click", () => stepRing(-1));
   $("#ringNext")?.addEventListener("click", () => stepRing(1));
   $("#ringRandom")?.addEventListener("click", () => {
@@ -343,6 +421,13 @@ function bindEvents() {
     }
   });
 
+  $("#showcaseGrid")?.addEventListener("click", (event) => {
+    const passport = event.target.closest("[data-open-builder]");
+    if (passport) {
+      openProfile(state.nodes.find((node) => node.handle === passport.dataset.openBuilder));
+    }
+  });
+
   // Sidebar row click triggers card select
   $("#leaderboardRows")?.addEventListener("click", (event) => {
     const row = event.target.closest("tr[data-sidebar-index]");
@@ -355,6 +440,9 @@ function bindEvents() {
   $("#search")?.addEventListener("input", (event) => {
     state.query = event.target.value.toLowerCase().trim();
     filterLeaderboard();
+    if (state.activeView === "projects") {
+      filterShowcase();
+    }
   });
 
   // Capturing arrow keys

@@ -42,7 +42,14 @@
   <main class="dashboard-wrap">
     <!-- LEFT PANEL: WebRing Explorer -->
     <section class="explorer-pane" id="ringView" aria-label="Browse the KL Dev-Ring">
-      <div class="explorer-inner">
+      <div class="pane-header">
+        <div class="view-tabs" role="tablist" aria-label="Explorer View Mode">
+          <button class="view-btn active" data-view="ring" role="tab" aria-selected="true">Explore Ring</button>
+          <button class="view-btn" data-view="projects" role="tab" aria-selected="false">Shipped Projects</button>
+        </div>
+      </div>
+
+      <div class="explorer-inner" id="ringInner">
         <div class="ring-orbit" id="ringOrbit">
           <div class="ring-track" id="ringTrack">
             <!-- Active builder cards rendered dynamically by JS -->
@@ -63,6 +70,12 @@
           <button class="ring-step ring-next" id="ringNext">
             <span>NEXT</span><b id="ringNextName">Builder</b>
           </button>
+        </div>
+      </div>
+
+      <div class="showcase-inner hidden" id="showcaseInner">
+        <div class="showcase-grid" id="showcaseGrid">
+          <!-- Rendered dynamically by JS -->
         </div>
       </div>
     </section>
