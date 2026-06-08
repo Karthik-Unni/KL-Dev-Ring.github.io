@@ -10,6 +10,13 @@
   "tags": ["ai", "machine-learning", "opensource", "fullstack", "webdev"],
   "bio": "AI builder, open-source developer, and Computer Science student from Kerala. Creator of Loom-GPT and founder of KL Dev-Ring. Passionate about machine learning, developer tools, and building impactful software.",
   "joined": "2026-06-08",
+  "stats": {
+    "contributions": 124,
+    "mergedPRs": 12,
+    "streak": 4,
+    "daily": 15,
+    "monthly": 120
+  },
   "projects": [
     {
       "name": "Loom-GPT",

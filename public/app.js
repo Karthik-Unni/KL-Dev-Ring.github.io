@@ -37,6 +37,7 @@ async function init() {
   }
   
   boot();
+  scheduleJoinAlerts();
 }
 
 function renderRing() {
@@ -106,6 +107,13 @@ function renderTableHeader() {
       <th class="num-col">SCORE</th>
       <th class="num-col">STREAK</th>
     `;
+  } else if (state.activeTab === "monthly") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>BUILDER</th>
+      <th class="num-col">MONTHLY</th>
+      <th class="num-col">SCORE</th>
+    `;
   } else if (state.activeTab === "weekly") {
     row.innerHTML = `
       <th>RANK</th>
@@ -113,16 +121,25 @@ function renderTableHeader() {
       <th class="num-col">STREAK</th>
       <th class="num-col">SCORE</th>
     `;
+  } else if (state.activeTab === "daily") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>BUILDER</th>
+      <th class="num-col">DAILY</th>
+      <th class="num-col">SCORE</th>
+    `;
   } else if (state.activeTab === "districts") {
     row.innerHTML = `
       <th>RANK</th>
       <th>DISTRICT</th>
+      <th class="num-col">SCORE</th>
       <th class="num-col">BUILDERS</th>
     `;
   } else if (state.activeTab === "colleges") {
     row.innerHTML = `
       <th>RANK</th>
       <th>COLLEGE</th>
+      <th class="num-col">SCORE</th>
       <th class="num-col">BUILDERS</th>
     `;
   }
@@ -156,6 +173,32 @@ function renderLeaderboard() {
         <td class="num-col streak-col">${node.stats?.streak || 0}W</td>
       </tr>
     `).join("");
+  } else if (state.activeTab === "monthly") {
+    const monthlyNodes = [...state.nodes].sort((a, b) => {
+      const mA = a.stats?.monthly || 0;
+      const mB = b.stats?.monthly || 0;
+      return mB - mA || b.score - a.score || a.handle.localeCompare(b.handle);
+    });
+
+    tbody.innerHTML = monthlyNodes.map((node) => {
+      const origIndex = state.nodes.findIndex((n) => n.handle === node.handle);
+      return `
+        <tr data-sidebar-index="${origIndex}" data-search-tokens="${escapeAttr(node.name + " " + node.district + " " + node.handle)}">
+          <td><span class="rank-badge">${node.rank}</span></td>
+          <td>
+            <div class="builder-identity">
+              <div class="builder-initials" style="background: hsl(${node.hue ?? 38} 80% 60%)">${initials(node.name)}</div>
+              <div class="builder-meta">
+                <strong>${node.name}</strong>
+                <small>${node.district}</small>
+              </div>
+            </div>
+          </td>
+          <td class="num-col score-col"><strong>+${node.stats?.monthly || 0}</strong></td>
+          <td class="num-col streak-col">${node.score}</td>
+        </tr>
+      `;
+    }).join("");
   } else if (state.activeTab === "weekly") {
     const weeklyNodes = [...state.nodes].sort((a, b) => {
       const streakA = a.stats?.streak || 0;
@@ -182,51 +225,75 @@ function renderLeaderboard() {
         </tr>
       `;
     }).join("");
+  } else if (state.activeTab === "daily") {
+    const dailyNodes = [...state.nodes].sort((a, b) => {
+      const dA = a.stats?.daily || 0;
+      const dB = b.stats?.daily || 0;
+      return dB - dA || b.score - a.score || a.handle.localeCompare(b.handle);
+    });
+
+    tbody.innerHTML = dailyNodes.map((node) => {
+      const origIndex = state.nodes.findIndex((n) => n.handle === node.handle);
+      return `
+        <tr data-sidebar-index="${origIndex}" data-search-tokens="${escapeAttr(node.name + " " + node.district + " " + node.handle)}">
+          <td><span class="rank-badge">${node.rank}</span></td>
+          <td>
+            <div class="builder-identity">
+              <div class="builder-initials" style="background: hsl(${node.hue ?? 38} 80% 60%)">${initials(node.name)}</div>
+              <div class="builder-meta">
+                <strong>${node.name}</strong>
+                <small>${node.district}</small>
+              </div>
+            </div>
+          </td>
+          <td class="num-col score-col"><strong>+${node.stats?.daily || 0}</strong></td>
+          <td class="num-col streak-col">${node.score}</td>
+        </tr>
+      `;
+    }).join("");
   } else if (state.activeTab === "districts") {
-    const distCounts = state.data?.districtCounts || {};
-    const items = Object.entries(distCounts)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    const distLeagues = state.data?.districtLeagues || [];
+    const items = [...distLeagues].sort((a, b) => b.score - a.score || b.count - a.count || a.name.localeCompare(b.name));
 
     tbody.innerHTML = items.map((item, index) => `
-      <tr data-search-tokens="${escapeAttr(item.name)}">
+      <tr data-search-tokens="${escapeAttr(item.name + " " + item.topBuilderName)}">
         <td><span class="rank-badge">${index + 1}</span></td>
         <td>
           <div class="builder-identity">
             <div class="builder-initials" style="background: hsl(38 80% 60%)">${item.name[0]}</div>
             <div class="builder-meta">
               <strong>${item.name}</strong>
-              <small>Kerala District</small>
+              <small>${item.topBuilderName ? `Top: <span class="league-top-builder" data-open-builder="${item.topBuilderHandle}">${item.topBuilderName}</span>` : "No builders"}</small>
             </div>
           </div>
         </td>
-        <td class="num-col"><strong>${item.count}</strong></td>
+        <td class="num-col score-col"><strong>${item.score}</strong></td>
+        <td class="num-col streak-col">${item.count}</td>
       </tr>
     `).join("");
   } else if (state.activeTab === "colleges") {
-    const colCounts = state.data?.collegeCounts || {};
-    const items = Object.entries(colCounts)
-      .map(([name, count]) => ({ name, count }))
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+    const colLeagues = state.data?.collegeLeagues || [];
+    const items = [...colLeagues].sort((a, b) => b.score - a.score || b.count - a.count || a.name.localeCompare(b.name));
 
     if (items.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" class="empty-rows">No student signals yet...</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-rows">No student signals yet...</td></tr>`;
       return;
     }
 
     tbody.innerHTML = items.map((item, index) => `
-      <tr data-search-tokens="${escapeAttr(item.name)}">
+      <tr data-search-tokens="${escapeAttr(item.name + " " + item.topBuilderName)}">
         <td><span class="rank-badge">${index + 1}</span></td>
         <td>
           <div class="builder-identity">
             <div class="builder-initials" style="background: hsl(153 80% 60%)">${item.name[0]}</div>
             <div class="builder-meta">
               <strong>${item.name}</strong>
-              <small>Institution</small>
+              <small>${item.topBuilderName ? `Top: <span class="league-top-builder" data-open-builder="${item.topBuilderHandle}">${item.topBuilderName}</span>` : "No builders"}</small>
             </div>
           </div>
         </td>
-        <td class="num-col"><strong>${item.count}</strong></td>
+        <td class="num-col score-col"><strong>${item.score}</strong></td>
+        <td class="num-col streak-col">${item.count}</td>
       </tr>
     `).join("");
   }
@@ -283,6 +350,176 @@ function filterShowcase() {
     const match = !state.query || card.dataset.searchTokens.includes(state.query);
     card.style.display = match ? "" : "none";
   });
+}
+
+function renderChat() {
+  const container = $("#chatMessages");
+  if (!container) return;
+
+  // Generate dynamic history
+  let messages = [];
+  
+  // 1. Bot greets the room and summarizes the stats
+  const totalBuilders = state.nodes.length;
+  const totalDistricts = new Set(state.nodes.map(n => n.district)).size;
+  const totalProjects = state.nodes.reduce((sum, n) => sum + (n.projects?.length || 0), 0);
+  
+  messages.push({
+    type: "chat",
+    sender: "Telemetry Bot",
+    handle: "telemetry-bot",
+    text: `🤖 System telemetry online. Kerala's Builder Network currently has **${totalBuilders} builder(s)** across **${totalDistricts} district(s)** shipping **${totalProjects} project(s)**! Type 'help' or 'join' to query details.`,
+    time: "System Init",
+    hue: 272,
+    isBot: true
+  });
+
+  // 2. Add System Join & Bot Welcome for each node in the registry
+  state.nodes.forEach((node) => {
+    messages.push({
+      type: "system",
+      text: `⚡ ${node.name} joined the network from ${node.district}.`,
+      time: node.joined
+    });
+
+    const projectNames = (node.projects || []).map(p => `**${p.name}**`).join(", ");
+    const shippedText = projectNames ? ` and shipped: ${projectNames}` : "";
+    
+    messages.push({
+      type: "chat",
+      sender: "Telemetry Bot",
+      handle: "telemetry-bot",
+      text: `🤖 Welcome **${node.name}** (@${node.github}) representing **${node.district}**! They joined the ring with rank **#${node.rank}** (Score: ${node.score})${shippedText}.`,
+      time: node.joined,
+      hue: 272,
+      isBot: true
+    });
+
+    (node.projects || []).forEach((proj) => {
+      messages.push({
+        type: "system",
+        text: `🚀 ${node.name} shipped ${proj.name}: ${proj.description}`,
+        time: node.joined,
+        link: proj.url
+      });
+    });
+  });
+
+  // 3. Retrieve user chat messages from localStorage and append
+  let userMsgs = [];
+  try {
+    const stored = localStorage.getItem("kl-user-chat-messages");
+    if (stored) {
+      userMsgs = JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Combine both arrays
+  messages = [...messages, ...userMsgs];
+
+  if (state.query) {
+    const q = state.query.toLowerCase();
+    messages = messages.filter((m) => {
+      if (m.text && m.text.toLowerCase().includes(q)) return true;
+      if (m.sender && m.sender.toLowerCase().includes(q)) return true;
+      return false;
+    });
+  }
+
+  container.innerHTML = messages.map((m) => {
+    if (m.type === "system") {
+      return `
+        <div class="chat-message system">
+          <span class="chat-system-tag">SYSTEM</span>
+          <span class="chat-system-text">${m.text}</span>
+          ${m.link ? `<a class="chat-system-link" href="${m.link}" target="_blank" rel="noreferrer">Open ↗</a>` : ""}
+          <span class="chat-time">${m.time}</span>
+        </div>
+      `;
+    }
+
+    const initialsChar = m.sender ? m.sender.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase() : "?";
+    const isUser = m.sender === "You" ? "user-self" : "";
+    const botTag = m.isBot ? `<span class="chat-bot-badge">BOT</span>` : "";
+    return `
+      <div class="chat-message user ${isUser}" style="--node-hue: ${m.hue ?? 38}">
+        <div class="chat-avatar" style="background: hsl(${m.hue ?? 38} 80% 60%)" data-open-builder="${m.handle || ''}">
+          ${initialsChar}
+        </div>
+        <div class="chat-msg-body">
+          <div class="chat-msg-header">
+            <strong class="chat-sender" data-open-builder="${m.handle || ''}">${m.sender}</strong>
+            ${botTag}
+            <span class="chat-time">${m.time}</span>
+          </div>
+          <p class="chat-text">${m.text}</p>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function showToast(title, body, handle = "") {
+  let container = $(".toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "toast-alert";
+  toast.setAttribute("role", "alert");
+  toast.innerHTML = `
+    <div class="toast-alert-header">
+      <span class="toast-alert-indicator"></span>
+      <strong class="toast-alert-title">NEW BUILDER SIGNAL</strong>
+      <button class="toast-alert-close" aria-label="Close notification">×</button>
+    </div>
+    <div class="toast-alert-body">
+      <p><strong>${title}</strong> ${body}</p>
+      ${handle ? `<button class="toast-alert-action" data-open-builder="${handle}">VIEW PASSPORT ↗</button>` : ""}
+    </div>
+  `;
+
+  container.appendChild(toast);
+
+  toast.querySelector(".toast-alert-close").addEventListener("click", () => {
+    toast.classList.add("fade-out");
+    setTimeout(() => toast.remove(), 300);
+  });
+
+  if (handle) {
+    toast.querySelector(".toast-alert-action").addEventListener("click", () => {
+      const node = state.nodes.find((n) => n.handle === handle);
+      if (node) {
+        openProfile(node);
+      }
+      toast.classList.add("fade-out");
+      setTimeout(() => toast.remove(), 300);
+    });
+  }
+
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.classList.add("fade-out");
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 6000);
+}
+
+function scheduleJoinAlerts() {
+  if (state.nodes.length === 0) return;
+  // Sort to find the latest joined builder
+  const latestBuilder = [...state.nodes].sort((a, b) => b.joined.localeCompare(a.joined))[0];
+  
+  setTimeout(() => {
+    showToast(latestBuilder.name, `just joined the network representing ${latestBuilder.district}!`, latestBuilder.handle);
+  }, 3000);
 }
 
 function renderStats() {
@@ -391,11 +628,18 @@ function bindEvents() {
       if (state.activeView === "ring") {
         $("#ringInner")?.classList.remove("hidden");
         $("#showcaseInner")?.classList.add("hidden");
-      } else {
+        $("#feedInner")?.classList.add("hidden");
+      } else if (state.activeView === "projects") {
         $("#ringInner")?.classList.add("hidden");
         $("#showcaseInner")?.classList.remove("hidden");
+        $("#feedInner")?.classList.add("hidden");
         renderShowcase();
         filterShowcase();
+      } else if (state.activeView === "feed") {
+        $("#ringInner")?.classList.add("hidden");
+        $("#showcaseInner")?.classList.add("hidden");
+        $("#feedInner")?.classList.remove("hidden");
+        renderChat();
       }
     });
   });
@@ -428,8 +672,90 @@ function bindEvents() {
     }
   });
 
+  $("#chatMessages")?.addEventListener("click", (event) => {
+    const passport = event.target.closest("[data-open-builder]");
+    if (passport) {
+      const handle = passport.dataset.openBuilder;
+      const node = state.nodes.find((n) => n.handle === handle);
+      if (node) {
+        openProfile(node);
+      }
+    }
+  });
+
+  $("#chatForm")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = $("#chatInput");
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    let userMsgs = [];
+    try {
+      const stored = localStorage.getItem("kl-user-chat-messages");
+      if (stored) {
+        userMsgs = JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    const newMsg = {
+      type: "chat",
+      sender: "You",
+      handle: "guest-builder",
+      text: text,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      hue: 45
+    };
+
+    userMsgs.push(newMsg);
+    localStorage.setItem("kl-user-chat-messages", JSON.stringify(userMsgs));
+    input.value = "";
+    renderChat();
+
+    // Trigger Bot Reply after 1 second
+    setTimeout(() => {
+      try {
+        let botText = `🤖 Signal received! I am the Dev-Ring Telemetry Bot. Kerala's Builder Network currently has **${state.nodes.length} active builder(s)**. Type 'join' to learn how to add your own profile, or 'status' for network stats.`;
+        
+        const q = text.toLowerCase();
+        if (q.includes("join") || q.includes("how to")) {
+          botText = `🤖 To join the Dev-Ring, click the 'Join the ring' button in the topbar, fork our GitHub repository, add your profile JSON file in \`members/\`, and submit a Pull Request!`;
+        } else if (q.includes("status") || q.includes("telemetry") || q.includes("stats")) {
+          const totalDistricts = new Set(state.nodes.map(n => n.district)).size;
+          const totalProjects = state.nodes.reduce((sum, n) => sum + (n.projects?.length || 0), 0);
+          botText = `🤖 Network Telemetry Status:\n- Builders Online: **${state.nodes.length}**\n- Districts Active: **${totalDistricts}**\n- Projects Shipped: **${totalProjects}**`;
+        }
+
+        const storedNow = localStorage.getItem("kl-user-chat-messages");
+        const msgs = storedNow ? JSON.parse(storedNow) : userMsgs;
+        msgs.push({
+          type: "chat",
+          sender: "Telemetry Bot",
+          handle: "telemetry-bot",
+          text: botText,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          hue: 272,
+          isBot: true
+        });
+        localStorage.setItem("kl-user-chat-messages", JSON.stringify(msgs));
+        if (state.activeView === "feed") {
+          renderChat();
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }, 1000);
+  });
+
   // Sidebar row click triggers card select
   $("#leaderboardRows")?.addEventListener("click", (event) => {
+    const passport = event.target.closest("[data-open-builder]");
+    if (passport) {
+      openProfile(state.nodes.find((node) => node.handle === passport.dataset.openBuilder));
+      return;
+    }
     const row = event.target.closest("tr[data-sidebar-index]");
     if (row) {
       updateRing(Number(row.dataset.sidebarIndex));
@@ -442,6 +768,36 @@ function bindEvents() {
     filterLeaderboard();
     if (state.activeView === "projects") {
       filterShowcase();
+    } else if (state.activeView === "feed") {
+      renderChat();
+    }
+  });
+
+  // Recruiter copy contact card handler
+  document.body.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-copy-contact]");
+    if (btn) {
+      const handle = btn.dataset.copyContact;
+      const node = state.nodes.find((n) => n.handle === handle);
+      if (!node) return;
+
+      const text = `KL DEV-RING BUILDER DETAILS:\n` +
+        `Name: ${node.name}\n` +
+        `District: ${node.district}\n` +
+        `College: ${node.college || "N/A"}\n` +
+        `GitHub: https://github.com/${node.github}\n` +
+        `Website: ${node.site}\n` +
+        `Score: ${node.score} (Rank #${node.rank})`;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = "COPIED DETAILS! ✓";
+        btn.style.background = "var(--green)";
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.style.background = "";
+        }, 2000);
+      });
     }
   });
 

@@ -40,6 +40,8 @@ export function buildProfileHTML(node) {
           <div><span>RING ID</span><b>KL-${String(node.rank).padStart(4, "0")}</b></div>
           <div><span>JOINED</span><b>${node.joined}</b></div>
           <div><span>BUILDER SCORE</span><b style="color:hsl(${hue} 90% 65%)">${node.score}</b></div>
+          <div><span>DAILY DELTA</span><b>+${node.stats?.daily ?? 0}</b></div>
+          <div><span>MONTHLY DELTA</span><b>+${node.stats?.monthly ?? 0}</b></div>
           <div><span>NETWORK RANK</span><b>#${node.rank}</b></div>
           <div><span>STREAK</span><b>${node.stats?.streak ?? 0} WEEKS</b></div>
         </div>
@@ -57,7 +59,7 @@ export function buildProfileHTML(node) {
         <div class="profile-links">
           <a href="${node.site}" target="_blank" rel="noreferrer" style="background:hsl(${hue} 85% 58%);color:#070a09;border-color:hsl(${hue} 85% 58%)">Personal site ↗</a>
           <a href="https://github.com/${node.github}" target="_blank" rel="noreferrer">GitHub ↗</a>
-          <a href="./builders/${node.handle}/">Full profile ↗</a>
+          <button class="recruiter-btn" data-copy-contact="${node.handle}">Copy Contact 📋</button>
         </div>
       </article>
     </div>`;

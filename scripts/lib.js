@@ -116,6 +116,45 @@ export function buildNetwork(rawMembers) {
       collegeCounts[col] = (collegeCounts[col] || 0) + 1;
     }
   }
+
+  // RICH LEAGUE METRICS
+  const districtLeagues = DISTRICTS.map((district) => {
+    const membersInDistrict = nodes.filter((member) => member.district === district);
+    const count = membersInDistrict.length;
+    const totalScore = membersInDistrict.reduce((sum, member) => sum + member.score, 0);
+    const sorted = [...membersInDistrict].sort((a, b) => b.score - a.score || a.handle.localeCompare(b.handle));
+    const topBuilder = sorted[0];
+    return {
+      name: district,
+      count,
+      score: totalScore,
+      topBuilderHandle: topBuilder ? topBuilder.handle : "",
+      topBuilderName: topBuilder ? topBuilder.name : ""
+    };
+  });
+
+  const collegeMap = {};
+  for (const node of nodes) {
+    if (node.college && node.college.trim() !== "") {
+      const col = node.college.trim();
+      if (!collegeMap[col]) collegeMap[col] = [];
+      collegeMap[col].push(node);
+    }
+  }
+  const collegeLeagues = Object.entries(collegeMap).map(([name, membersInCollege]) => {
+    const count = membersInCollege.length;
+    const totalScore = membersInCollege.reduce((sum, member) => sum + member.score, 0);
+    const sorted = [...membersInCollege].sort((a, b) => b.score - a.score || a.handle.localeCompare(b.handle));
+    const topBuilder = sorted[0];
+    return {
+      name,
+      count,
+      score: totalScore,
+      topBuilderHandle: topBuilder ? topBuilder.handle : "",
+      topBuilderName: topBuilder ? topBuilder.name : ""
+    };
+  });
+
   const tags = [...new Set(nodes.flatMap((member) => member.tags))];
   const trails = [
     ["AI Trail", "ai", "Machine intelligence, research, and humane products."],
@@ -137,7 +176,7 @@ export function buildNetwork(rawMembers) {
       projects: nodes.reduce((sum, m) => sum + (m.projects?.length || 0), 0),
       countries: new Set(nodes.map((m) => m.country)).size
     },
-    tags, districtCounts, collegeCounts, trails, nodes, links
+    tags, districtCounts, collegeCounts, districtLeagues, collegeLeagues, trails, nodes, links
   };
 }
 
