@@ -1,24 +1,25 @@
 {
-"handle": "karthik-unni",
-"name": "Karthik Unni",
-"github": "Karthik-Unni",
-"site": "https://karthik-unni.github.io",
-"city": "Kannur",
-"district": "Kannur",
-"country": "India",
-"tags": ["ai", "machine-learning", "opensource", "fullstack", "webdev"],
-"bio": "AI builder, open-source developer, and Computer Science student from Kerala. Creator of Loom-GPT and founder of KL Dev-Ring. Passionate about machine learning, developer tools, and building impactful software.",
-"joined": "2026-06-08",
-"projects": [
-{
-"name": "Loom-GPT",
-"url": "https://github.com/Karthik-Unni/Loom-gpt",
-"description": "An open-source framework for training and experimenting with GPT-style language models on custom datasets."
-},
-{
-"name": "KL Dev-Ring",
-"url": "https://github.com/KLWebRing/KL-Dev-Ring.github.io",
-"description": "A community-driven network connecting developers, researchers, founders, and open-source contributors across Kerala."
-}
-]
+  "handle": "karthik-unni",
+  "name": "Karthik Unni",
+  "github": "Karthik-Unni",
+  "site": "https://karthik-unni.github.io",
+  "city": "Kannur",
+  "district": "Kannur",
+  "college": "Model Engineering College",
+  "country": "India",
+  "tags": ["ai", "machine-learning", "opensource", "fullstack", "webdev"],
+  "bio": "AI builder, open-source developer, and Computer Science student from Kerala. Creator of Loom-GPT and founder of KL Dev-Ring. Passionate about machine learning, developer tools, and building impactful software.",
+  "joined": "2026-06-08",
+  "projects": [
+    {
+      "name": "Loom-GPT",
+      "url": "https://github.com/Karthik-Unni/Loom-gpt",
+      "description": "An open-source framework for training and experimenting with GPT-style language models on custom datasets."
+    },
+    {
+      "name": "KL Dev-Ring",
+      "url": "https://github.com/KLWebRing/KL-Dev-Ring.github.io",
+      "description": "A community-driven network connecting developers, researchers, founders, and open-source contributors across Kerala."
+    }
+  ]
 }

@@ -503,6 +503,48 @@ tr.active .rank-badge {
 .boot-radar i:last-child { inset: 50%; width: 50%; height: 1px; border: 0; transform-origin: left; background: linear-gradient(90deg, var(--saffron), transparent); animation: radar 2s linear infinite; border-radius: 0; }
 @keyframes radar { to { transform: rotate(360deg); } }
 
+.passport-college {
+  color: var(--green);
+  font-size: 9px;
+  display: block;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-family: var(--mono);
+}
+
+/* LEADERBOARD TAB BAR */
+.leaderboard-tabs {
+  display: flex;
+  gap: 2px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  background: rgba(7, 10, 9, 0.4);
+  padding: 3px;
+}
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--dim);
+  font: 500 8px var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tab-btn:hover {
+  color: var(--ink);
+}
+.tab-btn.active {
+  background: rgba(223, 232, 211, 0.08);
+  color: var(--saffron);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(255, 179, 26, 0.05);
+}
+
 /* RESPONSIVE LAYOUTS */
 @media (max-width: 900px) {
   .dashboard-wrap {

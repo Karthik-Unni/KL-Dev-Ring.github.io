@@ -5,6 +5,7 @@
   "site": "https://your-personal-site.example",
   "city": "Your Current City",
   "district": "Your Kerala District",
+  "college": "Your College Name (Optional)",
   "country": "India",
   "tags": ["opensource", "webdev"],
   "bio": "What are you building?",

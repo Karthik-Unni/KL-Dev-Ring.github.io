@@ -34,7 +34,9 @@ export function validateMember(member, filenames = []) {
   if (!DISTRICTS.includes(member.district)) errors.push("district must be one of Kerala's 14 districts");
   if (!Array.isArray(member.tags) || member.tags.length < 1 || member.tags.length > 8) errors.push("tags must contain 1-8 entries");
   if (member.tags?.some((tag) => !/^[a-z0-9-]+$/.test(tag))) errors.push("tags must be lowercase kebab-case");
-  if ((member.bio || "").length > 160) errors.push("bio must be 160 characters or fewer");
+  if ((member.bio || "").length > 250) errors.push("bio must be 250 characters or fewer");
+  if (member.college !== undefined && typeof member.college !== "string") errors.push("college must be a string");
+  if (member.college && member.college.length > 100) errors.push("college name must be 100 characters or fewer");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(member.joined || "")) errors.push("joined must use YYYY-MM-DD");
   for (const field of ["site"]) {
     try { if (new URL(member[field]).protocol !== "https:") errors.push(`${field} must use HTTPS`); }
@@ -64,7 +66,11 @@ function badges(member, rank, total) {
     (s.streak || 0) >= 30 && { icon: "⌁", label: "Streak" },
     (s.posts || 0) >= 15 && { icon: "✦", label: "Writer" },
     member.country !== "India" && { icon: "◎", label: "Diaspora" },
-    age <= 60 && { icon: "+", label: "New" }
+    age <= 60 && { icon: "+", label: "New" },
+    member.college && { icon: "🎓", label: "Student" },
+    member.tags?.includes("opensource") && { icon: "🚀", label: "FOSS Hero" },
+    member.tags?.includes("ai") && { icon: "🧠", label: "AI Builder" },
+    member.tags?.includes("webdev") && { icon: "🌐", label: "Web Builder" }
   ].filter(Boolean);
 }
 
@@ -103,6 +109,13 @@ export function buildNetwork(rawMembers) {
   const districtCounts = Object.fromEntries(DISTRICTS.map((district) => [
     district, nodes.filter((member) => member.district === district).length
   ]));
+  const collegeCounts = {};
+  for (const node of nodes) {
+    if (node.college && node.college.trim() !== "") {
+      const col = node.college.trim();
+      collegeCounts[col] = (collegeCounts[col] || 0) + 1;
+    }
+  }
   const tags = [...new Set(nodes.flatMap((member) => member.tags))];
   const trails = [
     ["AI Trail", "ai", "Machine intelligence, research, and humane products."],
@@ -124,7 +137,7 @@ export function buildNetwork(rawMembers) {
       projects: nodes.reduce((sum, m) => sum + (m.projects?.length || 0), 0),
       countries: new Set(nodes.map((m) => m.country)).size
     },
-    tags, districtCounts, trails, nodes, links
+    tags, districtCounts, collegeCounts, trails, nodes, links
   };
 }
 

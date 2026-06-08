@@ -35,7 +35,7 @@ export function buildProfileHTML(node) {
       <aside class="passport">
         <span class="eyebrow">KERALA BUILDER PASSPORT</span>
         <div class="passport-avatar">${initials(node.name)}</div>
-        <h2>${node.name}</h2><p>${node.district}<br>${node.country}</p>
+        <h2>${node.name}</h2><p>${node.district}<br>${node.country}${node.college ? `<br><small class="passport-college">${node.college}</small>` : ""}</p>
         <div class="passport-code">
           <div><span>RING ID</span><b>KL-${String(node.rank).padStart(4, "0")}</b></div>
           <div><span>JOINED</span><b>${node.joined}</b></div>

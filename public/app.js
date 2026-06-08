@@ -5,6 +5,7 @@ const state = {
   nodes: [],
   active: null,
   query: "",
+  activeTab: "all-time",
   ringIndex: 0,
   ringWheelLocked: false,
   ringTouchX: null
@@ -92,32 +93,141 @@ function renderRing() {
     </article>`).join("");
 }
 
+function renderTableHeader() {
+  const row = $("#leaderboardHeaderRow");
+  if (!row) return;
+
+  if (state.activeTab === "all-time") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>BUILDER</th>
+      <th class="num-col">SCORE</th>
+      <th class="num-col">STREAK</th>
+    `;
+  } else if (state.activeTab === "weekly") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>BUILDER</th>
+      <th class="num-col">STREAK</th>
+      <th class="num-col">SCORE</th>
+    `;
+  } else if (state.activeTab === "districts") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>DISTRICT</th>
+      <th class="num-col">BUILDERS</th>
+    `;
+  } else if (state.activeTab === "colleges") {
+    row.innerHTML = `
+      <th>RANK</th>
+      <th>COLLEGE</th>
+      <th class="num-col">BUILDERS</th>
+    `;
+  }
+}
+
 function renderLeaderboard() {
   const tbody = $("#leaderboardRows");
   if (!tbody) return;
+
+  renderTableHeader();
 
   if (state.nodes.length === 0) {
     tbody.innerHTML = `<tr><td colspan="4" class="empty-rows">Waiting for signals...</td></tr>`;
     return;
   }
 
-  // Nodes in network.json are pre-sorted by rank
-  tbody.innerHTML = state.nodes.map((node, index) => `
-    <tr data-sidebar-index="${index}" data-search-tokens="${escapeAttr(node.name + " " + node.district + " " + node.handle + " " + node.tags.join(" "))}">
-      <td><span class="rank-badge">${node.rank}</span></td>
-      <td>
-        <div class="builder-identity">
-          <div class="builder-initials" style="background: hsl(${node.hue ?? 38} 80% 60%)">${initials(node.name)}</div>
-          <div class="builder-meta">
-            <strong>${node.name}</strong>
-            <small>${node.district}</small>
+  if (state.activeTab === "all-time") {
+    tbody.innerHTML = state.nodes.map((node, index) => `
+      <tr data-sidebar-index="${index}" data-search-tokens="${escapeAttr(node.name + " " + node.district + " " + node.handle + " " + node.tags.join(" "))}">
+        <td><span class="rank-badge">${node.rank}</span></td>
+        <td>
+          <div class="builder-identity">
+            <div class="builder-initials" style="background: hsl(${node.hue ?? 38} 80% 60%)">${initials(node.name)}</div>
+            <div class="builder-meta">
+              <strong>${node.name}</strong>
+              <small>${node.district}</small>
+            </div>
           </div>
-        </div>
-      </td>
-      <td class="num-col score-col"><strong>${node.score}</strong></td>
-      <td class="num-col streak-col">${node.stats?.streak || 0}W</td>
-    </tr>
-  `).join("");
+        </td>
+        <td class="num-col score-col"><strong>${node.score}</strong></td>
+        <td class="num-col streak-col">${node.stats?.streak || 0}W</td>
+      </tr>
+    `).join("");
+  } else if (state.activeTab === "weekly") {
+    const weeklyNodes = [...state.nodes].sort((a, b) => {
+      const streakA = a.stats?.streak || 0;
+      const streakB = b.stats?.streak || 0;
+      return streakB - streakA || b.score - a.score || a.handle.localeCompare(b.handle);
+    });
+
+    tbody.innerHTML = weeklyNodes.map((node) => {
+      const origIndex = state.nodes.findIndex((n) => n.handle === node.handle);
+      return `
+        <tr data-sidebar-index="${origIndex}" data-search-tokens="${escapeAttr(node.name + " " + node.district + " " + node.handle + " " + node.tags.join(" "))}">
+          <td><span class="rank-badge">${node.rank}</span></td>
+          <td>
+            <div class="builder-identity">
+              <div class="builder-initials" style="background: hsl(${node.hue ?? 38} 80% 60%)">${initials(node.name)}</div>
+              <div class="builder-meta">
+                <strong>${node.name}</strong>
+                <small>${node.district}</small>
+              </div>
+            </div>
+          </td>
+          <td class="num-col streak-col"><strong>${node.stats?.streak || 0}W</strong></td>
+          <td class="num-col score-col">${node.score}</td>
+        </tr>
+      `;
+    }).join("");
+  } else if (state.activeTab === "districts") {
+    const distCounts = state.data?.districtCounts || {};
+    const items = Object.entries(distCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+    tbody.innerHTML = items.map((item, index) => `
+      <tr data-search-tokens="${escapeAttr(item.name)}">
+        <td><span class="rank-badge">${index + 1}</span></td>
+        <td>
+          <div class="builder-identity">
+            <div class="builder-initials" style="background: hsl(38 80% 60%)">${item.name[0]}</div>
+            <div class="builder-meta">
+              <strong>${item.name}</strong>
+              <small>Kerala District</small>
+            </div>
+          </div>
+        </td>
+        <td class="num-col"><strong>${item.count}</strong></td>
+      </tr>
+    `).join("");
+  } else if (state.activeTab === "colleges") {
+    const colCounts = state.data?.collegeCounts || {};
+    const items = Object.entries(colCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+    if (items.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="empty-rows">No student signals yet...</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map((item, index) => `
+      <tr data-search-tokens="${escapeAttr(item.name)}">
+        <td><span class="rank-badge">${index + 1}</span></td>
+        <td>
+          <div class="builder-identity">
+            <div class="builder-initials" style="background: hsl(153 80% 60%)">${item.name[0]}</div>
+            <div class="builder-meta">
+              <strong>${item.name}</strong>
+              <small>Institution</small>
+            </div>
+          </div>
+        </td>
+        <td class="num-col"><strong>${item.count}</strong></td>
+      </tr>
+    `).join("");
+  }
 }
 
 function renderStats() {
@@ -197,6 +307,21 @@ function selectNode(node) {
 }
 
 function bindEvents() {
+  // Tab switching handler
+  document.querySelectorAll(".leaderboard-tabs button")?.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".leaderboard-tabs button").forEach((b) => {
+        b.classList.remove("active");
+        b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active");
+      btn.setAttribute("aria-selected", "true");
+      state.activeTab = btn.dataset.tab;
+      renderLeaderboard();
+      filterLeaderboard();
+    });
+  });
+
   $("#ringPrev")?.addEventListener("click", () => stepRing(-1));
   $("#ringNext")?.addEventListener("click", () => stepRing(1));
   $("#ringRandom")?.addEventListener("click", () => {

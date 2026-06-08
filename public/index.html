@@ -76,12 +76,18 @@
           <span>⌕</span>
           <input id="search" type="search" placeholder="Filter by name, district, or craft..." autocomplete="off">
         </div>
+        <div class="leaderboard-tabs" role="tablist" aria-label="Ranking Categories">
+          <button class="tab-btn active" data-tab="all-time" role="tab" aria-selected="true">All-Time</button>
+          <button class="tab-btn" data-tab="weekly" role="tab" aria-selected="false">Weekly</button>
+          <button class="tab-btn" data-tab="districts" role="tab" aria-selected="false">Districts</button>
+          <button class="tab-btn" data-tab="colleges" role="tab" aria-selected="false">Colleges</button>
+        </div>
       </div>
       
       <div class="leaderboard-body">
         <table class="sidebar-table">
           <thead>
-            <tr>
+            <tr id="leaderboardHeaderRow">
               <th>RANK</th>
               <th>BUILDER</th>
               <th class="num-col">SCORE</th>
