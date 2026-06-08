@@ -3,17 +3,17 @@
   "name": "Karthik Unni",
   "github": "Karthik-Unni",
   "site": "https://karthik-unni.github.io",
-  "city": "Ernakulam",
-  "district": "Ernakulam",
+  "city": "Kannur",
+  "district": "Kannur",
   "country": "India",
-  "tags": ["opensource", "webdev"],
-  "bio": "Creator of KL Dev-Ring. Building Kerala's open-source builder network.",
+  "tags": ["ai", "machine-learning", "opensource", "webdev", "fullstack", "dsa"],
+  "bio": "Computer Science student, AI enthusiast, and open-source builder from Kerala. I build machine learning systems, full-stack applications, developer tools, and open-source projects. Creator of KL Dev-Ring, an initiative to connect and showcase Kerala's developer community.",
   "joined": "2026-06-08",
   "projects": [
     {
       "name": "KL Dev-Ring",
       "url": "https://github.com/KLWebRing/KL-Dev-Ring.github.io",
-      "description": "Kerala's open-source builder network."
+      "description": "A community-driven network connecting developers, builders, researchers, founders, and open-source contributors across Kerala."
     }
   ]
 }
