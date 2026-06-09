@@ -1,34 +1,34 @@
 {
-"handle": "RijinRajeevan",
-"name": "Rijin Rajeevan",
-"github": "RijinRajeevan",
-"site": "",
-"city": "Kannur",
-"district": "Kannur",
-"college": "Amrita Vishwa Vidyapeetham, Amritapuri",
-"country": "India",
-"tags": [
-"ai",
-"machine-learning",
-"deep-learning",
-"python",
-"computer-vision",
-"generative-ai"
-],
-"bio": "B.Tech CSE (AI) student at Amrita Vishwa Vidyapeetham, Amritapuri. Aspiring AI/ML Engineer passionate about Machine Learning, Deep Learning, Generative AI, and building intelligent solutions. Continuously improving technical, communication, and problem-solving skills through projects and certifications.",
-"joined": "2026-06-09",
-"stats": {
-"contributions": 0,
-"mergedPRs": 0,
-"streak": 0,
-"daily": 0,
-"monthly": 0
-},
-"projects": [
-{
-"name": "AI & Machine Learning Portfolio",
-"url": "https://github.com/RijinRajeevan",
-"description": "Collection of AI, Machine Learning, Deep Learning, and Computer Vision projects."
-}
-]
+  "handle": "rijin-rajeevan",
+  "name": "Rijin Rajeevan",
+  "github": "RijinRajeevan",
+  "site": "https://github.com/RijinRajeevan",
+  "city": "Kannur",
+  "district": "Kannur",
+  "college": "Amrita Vishwa Vidyapeetham, Amritapuri",
+  "country": "India",
+  "tags": [
+    "ai",
+    "machine-learning",
+    "deep-learning",
+    "python",
+    "computer-vision",
+    "generative-ai"
+  ],
+  "bio": "B.Tech CSE (AI) student at Amrita Vishwa Vidyapeetham. Passionate about AI, ML, Deep Learning, Computer Vision, and Generative AI. Building projects and continuously improving through hands-on learning.",
+  "joined": "2026-06-09",
+  "stats": {
+    "contributions": 0,
+    "mergedPRs": 0,
+    "streak": 0,
+    "daily": 0,
+    "monthly": 0
+  },
+  "projects": [
+    {
+      "name": "AI & Machine Learning Portfolio",
+      "url": "https://github.com/RijinRajeevan",
+      "description": "Collection of AI, ML, Deep Learning, and Computer Vision projects."
+    }
+  ]
 }
