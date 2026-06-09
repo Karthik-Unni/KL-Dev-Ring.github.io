@@ -1,0 +1,20 @@
+{
+  "handle": "your-handle",
+  "name": "Your Name",
+  "github": "your-github-username",
+  "site": "https://your-personal-site.example",
+  "city": "Your Current City",
+  "district": "Your Kerala District",
+  "college": "Your College Name (Optional)",
+  "country": "India",
+  "tags": ["opensource", "webdev"],
+  "bio": "What are you building?",
+  "joined": "2026-06-07",
+  "projects": [
+    {
+      "name": "Project Name",
+      "url": "https://project.example",
+      "description": "One sentence about the project."
+    }
+  ]
+}
