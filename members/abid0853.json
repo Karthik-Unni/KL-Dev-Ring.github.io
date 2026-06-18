@@ -7,7 +7,7 @@
   "district": "Kottayam",
   "college": "Amal Jyothi College of Engineering",
   "country": "India",
-  "tags": ["fullstack", "react", "java", "flutter","python"],
+  "tags": ["fullstack", "react", "java","flutter","python"],
   "bio": "Founder at AyraSoft. Building full-stack web applications, PWAs, and applied AI systems.",
   "joined": "2026-06-18",
   "stats": {
@@ -35,7 +35,7 @@
   },
   {
     "name": "LookLock",
-    "url": "https://github.com/abid0853/looklock",
+    "url": "https://github.com/abid0853/LookLock---CV-Textile-Security",
     "description": "A computer vision-powered retail security and loss-prevention system that identifies customers, extracts visual attributes, and verifies purchases against POS transactions using edge AI."
   },
   {
@@ -50,7 +50,7 @@
   },
   {
     "name": "Gym Management PWA",
-    "url": "https://gym-ogqxty5ci-abid-s-projects-e8c7a635.vercel.app",
+    "url": "https://gym-master-pwa.vercel.app/",
     "description": "A full-stack gym management solution featuring membership tracking, payment management, attendance monitoring, and an administrative dashboard built with Firebase."
   }
 ]
