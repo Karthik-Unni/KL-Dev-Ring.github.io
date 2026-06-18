@@ -1,0 +1,57 @@
+{
+  "handle": "abid0853",
+  "name": "Abid TS",
+  "github": "abid0853",
+  "site": "https://abidts.work",
+  "city": "Kanjirappally",
+  "district": "Kottayam",
+  "college": "Amal Jyothi College of Engineering",
+  "country": "India",
+  "tags": ["fullstack", "react", "java","flutter","python"],
+  "bio": "Founder at AyraSoft. Building full-stack web applications, PWAs, and applied AI systems.",
+  "joined": "2026-06-18",
+  "stats": {
+    "contributions": 1,
+    "mergedPRs": 0,
+    "streak": 1,
+    "daily": 1,
+    "monthly": 1
+  },
+  "projects": [
+  {
+    "name": "KeralaVipani",
+    "url": "https://keralavipani.vercel.app",
+    "description": "A crowdsourced Progressive Web App (PWA) for tracking real-time commodity market rates across all 14 districts of Kerala. Built with React, Firebase, and Firestore, featuring secure maker-checker verification workflows, real-time updates, advanced filtering, and offline-first mobile support."
+  },
+  {
+    "name": "DentOS",
+    "url": "https://ayrasoft.vercel.app/dentos.html",
+    "description": "A comprehensive dental practice management platform built with React and Java. Features appointment scheduling, patient record management, treatment tracking, and an integrated doctor dashboard designed to streamline daily clinical operations."
+  },
+  {
+    "name": "Poultry Shield AI",
+    "url": "https://github.com/abid0853/poultry_ai_backend",
+    "description": "A multimodal AI diagnostic platform for poultry farmers combining CNN-based image analysis, acoustic disease detection, disease hotspot mapping, and an AI-powered advisory assistant."
+  },
+  {
+    "name": "LookLock",
+    "url": "https://github.com/abid0853/LookLock---CV-Textile-Security",
+    "description": "A computer vision-powered retail security and loss-prevention system that identifies customers, extracts visual attributes, and verifies purchases against POS transactions using edge AI."
+  },
+  {
+    "name": "LaunDry Today",
+    "url": "https://laundrytoday.vercel.app",
+    "description": "A hyper-local weather intelligence PWA that predicts laundry drying conditions using a custom algorithm based on temperature, humidity, and wind-speed data from real-time weather APIs."
+  },
+  {
+    "name": "AQI Navigator",
+    "url": "https://github.com/abid0853/nasa-aqi-project",
+    "description": "A machine learning-powered air quality prediction platform that combines NASA TEMPO satellite data with ground sensor readings to forecast AQI and provide health-risk insights."
+  },
+  {
+    "name": "Gym Management PWA",
+    "url": "https://gym-master-pwa.vercel.app/",
+    "description": "A full-stack gym management solution featuring membership tracking, payment management, attendance monitoring, and an administrative dashboard built with Firebase."
+  }
+]
+}
